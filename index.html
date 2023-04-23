@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Grid Generator</title>
+    <script>
+      var xsize, ysize;
+      var gridArray = [];
+
+      function saveGridSize() {
+        xsize = document.getElementById("xsize").value;
+        ysize = document.getElementById("ysize").value;
+        alert("Ok, thanks! Grid will be " + xsize + "x" + ysize);
+      }
+
+      function generateGrid() {
+        var grid = document.getElementById("grid");
+        var rows = "";
+        for (var i = 0; i < ysize; i++) {
+          var columns = "";
+          for (var j = 0; j < xsize; j++) {
+            columns += "<div class='box' id='box" + i + "-" + j + "' onclick='toggleBox(" + i + "," + j + ")'></div>";
+            gridArray.push(0);
+          }
+          rows += "<div class='row'>" + columns + "</div>";
+        }
+        grid.innerHTML = rows;
+      }
+
+      function toggleBox(row, col) {
+        var box = document.getElementById("box" + row + "-" + col);
+        if (box.style.backgroundColor === "black") {
+          box.style.backgroundColor = "white";
+          gridArray[row * xsize + col] = 0;
+        } else {
+          box.style.backgroundColor = "black";
+          gridArray[row * xsize + col] = 1;
+        }
+      }
+
+      function generateLua() {
+        var lua = "local grid = {\n";
+        for (var i = 0; i < ysize; i++) {
+          lua += "{";
+          for (var j = 0; j < xsize; j++) {
+            lua += gridArray[i * xsize + j];
+            if (j < xsize - 1) {
+              lua += ",";
+            }
+          }
+          lua += "}";
+          if (i < ysize - 1) {
+            lua += ",";
+          }
+          lua += "\n";
+        }
+        lua += "}";
+        document.getElementById("lua").innerHTML = lua;
+      }
+    </script>
+    <style>
+      .box {
+        width: 15px;
+        height: 15px;
+        border: 1px solid grey;
+        display: inline-block;
+        background-color: white;
+      }
+      .row {
+        clear: both;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <label>X Size:</label>
+      <input type="text" id="xsize">
+    </div>
+    <div>
+      <label>Y Size:</label>
+      <input type="text" id="ysize">
+    </div>
+    <button onclick="saveGridSize(); generateGrid()">Submit</button>
+    <div id="grid"></div>
+    <button onclick="generateLua()">Generate LUA</button>
+    <div id="lua"></div>
+  </body>
+</html>
